@@ -75,7 +75,7 @@ Begin VB.Form Form1
       Height          =   264
       Left            =   1728
       TabIndex        =   13
-      Text            =   "r:\pages.pdf"
+      Text            =   "D:\pages.pdf"
       Top             =   4608
       Width           =   4428
    End
@@ -197,7 +197,7 @@ Begin VB.Form Form1
       Height          =   264
       Left            =   1632
       TabIndex        =   0
-      Text            =   "r:\234.pdf"
+      Text            =   "D:\234.pdf"
       Top             =   960
       Width           =   4428
    End
@@ -453,6 +453,8 @@ Private Sub Command1_Click()
         Dim pb As New DebenuPDFLibraryAX1016.PDFLibrary
         Dim PdfFile As String
         Dim pages As Integer
+        Dim SavePath As String
+        Dim SaveName As String
         Dim x As Integer, y As Integer
         Dim size As Double
         Dim begin As Integer
@@ -493,7 +495,9 @@ Private Sub Command1_Click()
             Next i
         End If
         
-        result = pb.SaveToFile("r:\1.pdf")
+        SavePath = Left(PdfFile, InStrRev(PdfFile, "\"))
+        SaveName = Mid(PdfFile, InStrRev(PdfFile, "\") + 1, InStrRev(PdfFile, ".") - 4) & "_paged.pdf"
+        result = pb.SaveToFile(SavePath & SaveName)
         If result = 0 Then MsgBox ("保存失败，请先关闭文件")
     End If
     SB1.Panels(1).Text = "完成 耗时：" & Timer - time & "s"
@@ -506,6 +510,8 @@ Private Sub Command10_Click()
         time = Timer
         Dim pb As New DebenuPDFLibraryAX1016.PDFLibrary
         Dim PdfFile As String
+        Dim SavePath As String
+        Dim SaveName As String
         Dim pages As Integer
         Dim x As Integer, y As Integer
         Dim size As Double
@@ -589,7 +595,9 @@ Private Sub Command10_Click()
             End If
         End If
         
-        result = pb.SaveToFile("r:\1.pdf")
+        SavePath = Left(PdfFile, InStrRev(PdfFile, "\"))
+        SaveName = Mid(PdfFile, InStrRev(PdfFile, "\") + 1, InStrRev(PdfFile, ".") - 4) & "_paged.pdf"
+        result = pb.SaveToFile(SavePath & SaveName)
         If result = 0 Then MsgBox ("保存失败，请先关闭文件")
     End If
     SB1.Panels(1).Text = "完成 耗时：" & Timer - time & "s"
@@ -820,7 +828,7 @@ End Sub
 
 
 Private Sub Tab1_Click()
-    MsgBox "         PdfPager v1.0  2018.8" & vbCrLf & vbCrLf & "Pdf自动编码器" & vbCrLf & _
+    MsgBox "         PdfPager v1.1  2018.8" & vbCrLf & vbCrLf & "Pdf自动编码器" & vbCrLf & _
     vbCrLf & "运行出错请使用‘注册控件’功能", vbOKOnly, "关于"
 End Sub
 

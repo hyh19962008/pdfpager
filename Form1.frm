@@ -14,6 +14,14 @@ Begin VB.Form Form1
    ScaleHeight     =   7356
    ScaleWidth      =   10968
    StartUpPosition =   3  '窗口缺省
+   Begin VB.CommandButton Command5 
+      Caption         =   "翻页文件"
+      Height          =   396
+      Left            =   3552
+      TabIndex        =   33
+      Top             =   5760
+      Width           =   1164
+   End
    Begin VB.TextBox Text8 
       Height          =   300
       Left            =   9216
@@ -38,7 +46,7 @@ Begin VB.Form Form1
    Begin VB.CommandButton Command7 
       Caption         =   "生成双面版"
       Height          =   396
-      Left            =   3456
+      Left            =   2208
       TabIndex        =   25
       Top             =   5760
       Width           =   1164
@@ -135,7 +143,7 @@ Begin VB.Form Form1
    Begin VB.CommandButton Command3 
       Caption         =   "生成单面版"
       Height          =   396
-      Left            =   1728
+      Left            =   864
       TabIndex        =   5
       Top             =   5760
       Width           =   1164
@@ -424,9 +432,6 @@ Begin VB.Form Form1
       Top             =   6336
       Width           =   684
    End
-   Begin VB.Menu Menu1 
-      Caption         =   "注册控件"
-   End
    Begin VB.Menu Menu2 
       Caption         =   "关于"
       Begin VB.Menu Tab1 
@@ -661,6 +666,82 @@ Private Sub Command4_Click()
     Color1.BackColor = cd1.Color
 End Sub
 
+Private Sub Command5_Click()
+    SB1.Panels(1).Text = "处理中..."
+    If check2() = True Then
+        time = Timer
+        Dim pb As New DebenuPDFLibraryAX1016.PDFLibrary
+        Dim size As Double
+        Dim page As Integer
+        Dim maxpage As Integer
+        Dim r%, g%, b%
+        Dim x%, y%
+        
+        r = (cd1.Color And &HFF) Mod 256
+        g = ((cd1.Color And &HFF00) \ &H100) Mod 256
+        b = ((cd1.Color And &HFF0000) \ &H10000) Mod 256
+        Call pb.UnlockKey("j87ig3k84fb9eq9dy34z7u66y")
+        
+        size = Val(Text3.Text)
+        angle = Val(Text8.Text)
+        pb.SetOrigin 1
+        maxpage = Val(Text5.Text)
+        page = 1
+    
+        pb.SelectPage page     '第一页
+        pb.SetPageSize "A4"
+        x = pb.PageWidth * Slider1.Value / 100
+        y = pb.PageHeight * Slider2.Value / 100
+        pb.SetTextSize size
+        pb.SetTextColor r, g, b
+        Call pb.DrawLine(pb.PageWidth - x - 1.5 * size, y, pb.PageWidth - x - 1.5 * size, y + 1)
+        page = page + 1
+        
+        If maxpage Mod 2 = 0 Then       '总页数是否为偶数
+            Do While page <= maxpage
+                Call pb.NewPage
+                pb.SetPageSize "A4"
+                pb.SetTextSize size
+                pb.SetTextColor r, g, b
+                If page Mod 2 <> 0 Then
+                    Call pb.DrawLine(pb.PageWidth - x - 1.5 * size, y, pb.PageWidth - x - 1.5 * size, y + 1)
+                Else
+                    Call pb.DrawLine(x, y, x, y + 1)
+                End If
+                page = page + 1
+            Loop
+        Else                               '非偶数，最后一页需要提前加一页空白页
+            Do While page <= maxpage
+                If page <> maxpage Then
+                    Call pb.NewPage
+                    pb.SetPageSize "A4"
+                    pb.SetTextSize size
+                    pb.SetTextColor r, g, b
+                    If page Mod 2 <> 0 Then
+                        Call pb.DrawLine(pb.PageWidth - x - 1.5 * size, y, pb.PageWidth - x - 1.5 * size, y + 1)
+                    Else
+                        Call pb.DrawLine(x, y, x, y + 1)
+                    End If
+                Else                        '最后一页
+                    Call pb.NewPage         '空白页
+                    pb.SetPageSize "A4"
+                    Call pb.NewPage
+                    pb.SetPageSize "A4"
+                    pb.SetTextSize size
+                    pb.SetTextColor r, g, b
+                    Call pb.DrawRotatedText(x, y, x, y + 1)
+                End If
+                page = page + 1
+            Loop
+        End If
+        
+        result = pb.SaveToFile(Text4.Text)
+        If result = 0 Then MsgBox ("保存失败，请先关闭文件")
+    End If
+    SB1.Panels(1).Text = "完成 耗时：" & Timer - time & "s"
+    Timer1.Enabled = True
+End Sub
+
 Private Sub Command6_Click()
     cd1.ShowOpen
     Text4.Text = cd1.FileName
@@ -742,19 +823,13 @@ Private Sub Command7_Click()
     Timer1.Enabled = True
 End Sub
 
-Private Sub Command9_Click()
-    MsgBox SB1.Panels(1).Text
-End Sub
-
 Private Sub Form_Load()
     App.Title = ""
     cd1.Color = 0
     Box1.Scale (100, 100)-(0, 0)
     Color1.BackColor = cd1.Color
     Text7 = "编码模板是一个只含有页码的pdf文件，可以利用它对已经打印好的文件进行编码。即，将文件装入打印机纸箱后打印此模板"
-End Sub
-
-Private Sub Menu1_Click()
+    '启动时自动注册控件
     Dim sysdir$, dirlen%
     sysdir = Space(50)
     dirlen = GetSystemDirectory(sysdir, 50)
@@ -764,13 +839,12 @@ Private Sub Menu1_Click()
         On Error GoTo ERRmsg
         Call FileCopy(App.Path & "\pdf2parts.dll", sysdir & "\pdf2parts.dll")
         Shell App.Path & "\regsvr32.exe /s " & sysdir & "\pdf2parts.dll"
-        MsgBox "注册成功！"
-    Else
-        MsgBox "已经注册"
+        MsgBox "注册控件成功！"
     End If
     Exit Sub
 ERRmsg:
-    MsgBox "错误：无法复制文件" & vbCrLf & vbCrLf & "请以管理员身份运行本程序"
+    MsgBox "错误：无法注册控件" & vbCrLf & vbCrLf & "首次运行请以管理员身份运行本程序"
+    End
 End Sub
 
 Sub showpos()
@@ -828,8 +902,8 @@ End Sub
 
 
 Private Sub Tab1_Click()
-    MsgBox "         PdfPager v1.1  2018.8" & vbCrLf & vbCrLf & "Pdf自动编码器" & vbCrLf & _
-    vbCrLf & "运行出错请使用‘注册控件’功能", vbOKOnly, "关于"
+    MsgBox "         PdfPager v1.2  2018.9" & vbCrLf & vbCrLf & "Pdf自动编码器" _
+    , vbOKOnly, "关于"
 End Sub
 
 Private Sub Timer1_Timer()

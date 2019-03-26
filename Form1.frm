@@ -488,7 +488,11 @@ Private Sub Command1_Click()
                 Call pb.SetFontFlags(1, 0, 1, 0, 0, 0, 0, 1)
                 pb.SetTextSize size
                 pb.SetTextColor r, g, b
-                Call pb.DrawRotatedText(y, x, 270, String(3 - Len(i + begin - 1), "0") & (i + begin - 1))
+                If pages >= 1000 Then
+                    Call pb.DrawRotatedText(y, x, 270, String(4 - Len(i + begin - 1), "0") & (i + begin - 1))
+                Else
+                    Call pb.DrawRotatedText(y, x, 270, String(3 - Len(i + begin - 1), "0") & (i + begin - 1))
+                End If
             Next i
         Else
             For i = 1 To pages
@@ -496,7 +500,11 @@ Private Sub Command1_Click()
                 Call pb.SetFontFlags(1, 0, 1, 0, 0, 0, 0, 1)
                 pb.SetTextSize size
                 pb.SetTextColor r, g, b
-                Call pb.DrawText(y, x, String(3 - Len(i + begin - 1), "0") & (i + begin - 1))
+                If pages >= 1000 Then
+                    Call pb.DrawText(y, x, String(4 - Len(i + begin - 1), "0") & (i + begin - 1))
+                Else
+                    Call pb.DrawText(y, x, String(3 - Len(i + begin - 1), "0") & (i + begin - 1))
+                End If
             Next i
         End If
         
@@ -553,10 +561,18 @@ Private Sub Command10_Click()
                     Call pb.SetFontFlags(1, 0, 1, 0, 0, 0, 0, 1)
                     pb.SetTextSize size
                     pb.SetTextColor r, g, b
-                    If i Mod 2 <> 0 Then
-                        Call pb.DrawRotatedText(y, x, 270, String(3 - Len(i + begin - 1), "0") & (i + begin - 1))
+                    If pages >= 1000 Then
+                        If i Mod 2 <> 0 Then
+                            Call pb.DrawRotatedText(y, x, 270, String(4 - Len(i + begin - 1), "0") & (i + begin - 1))
+                        Else
+                            Call pb.DrawRotatedText(y, pb.PageHeight - x + 1.5 * size, 270, String(4 - Len(i + begin - 1), "0") & (i + begin - 1))
+                        End If
                     Else
-                        Call pb.DrawRotatedText(y, pb.PageHeight - x + 1.5 * size, 270, String(3 - Len(i + begin - 1), "0") & (i + begin - 1))
+                        If i Mod 2 <> 0 Then
+                            Call pb.DrawRotatedText(y, x, 270, String(3 - Len(i + begin - 1), "0") & (i + begin - 1))
+                        Else
+                            Call pb.DrawRotatedText(y, pb.PageHeight - x + 1.5 * size, 270, String(3 - Len(i + begin - 1), "0") & (i + begin - 1))
+                        End If
                     End If
                 Next i
             Else
@@ -565,10 +581,18 @@ Private Sub Command10_Click()
                     Call pb.SetFontFlags(1, 0, 1, 0, 0, 0, 0, 1)
                     pb.SetTextSize size
                     pb.SetTextColor r, g, b
-                    If i Mod 2 = 0 Then
-                        Call pb.DrawRotatedText(y, pb.PageHeight - x + 1.5 * size, 270, String(3 - Len(i + begin - 1), "0") & (i + begin - 1))
+                    If pages >= 1000 Then
+                        If i Mod 2 = 0 Then
+                            Call pb.DrawRotatedText(y, pb.PageHeight - x + 1.5 * size, 270, String(4 - Len(i + begin - 1), "0") & (i + begin - 1))
+                        Else
+                            Call pb.DrawRotatedText(y, x, 270, String(4 - Len(i + begin - 1), "0") & (i + begin - 1))
+                        End If
                     Else
-                        Call pb.DrawRotatedText(y, x, 270, String(3 - Len(i + begin - 1), "0") & (i + begin - 1))
+                        If i Mod 2 = 0 Then
+                            Call pb.DrawRotatedText(y, pb.PageHeight - x + 1.5 * size, 270, String(3 - Len(i + begin - 1), "0") & (i + begin - 1))
+                        Else
+                            Call pb.DrawRotatedText(y, x, 270, String(3 - Len(i + begin - 1), "0") & (i + begin - 1))
+                        End If
                     End If
                 Next i
             End If
@@ -579,10 +603,18 @@ Private Sub Command10_Click()
                     Call pb.SetFontFlags(1, 0, 1, 0, 0, 0, 0, 1)
                     pb.SetTextSize size
                     pb.SetTextColor r, g, b
-                    If i Mod 2 <> 0 Then
-                        Call pb.DrawText(y, x, String(3 - Len(i + begin - 1), "0") & (i + begin - 1))
+                    If pages >= 1000 Then
+                        If i Mod 2 <> 0 Then
+                            Call pb.DrawText(y, x, String(4 - Len(i + begin - 1), "0") & (i + begin - 1))
+                        Else
+                            Call pb.DrawText(pb.PageWidth - y + 1.5 * size, x, String(4 - Len(i + begin - 1), "0") & (i + begin - 1))
+                        End If
                     Else
-                        Call pb.DrawText(pb.PageWidth - y + 1.5 * size, x, String(3 - Len(i + begin - 1), "0") & (i + begin - 1))
+                        If i Mod 2 <> 0 Then
+                            Call pb.DrawText(y, x, String(3 - Len(i + begin - 1), "0") & (i + begin - 1))
+                        Else
+                            Call pb.DrawText(pb.PageWidth - y + 1.5 * size, x, String(3 - Len(i + begin - 1), "0") & (i + begin - 1))
+                        End If
                     End If
                 Next i
             Else
@@ -591,10 +623,18 @@ Private Sub Command10_Click()
                     Call pb.SetFontFlags(1, 0, 1, 0, 0, 0, 0, 1)
                     pb.SetTextSize size
                     pb.SetTextColor r, g, b
-                    If i Mod 2 = 0 Then
-                        Call pb.DrawText(pb.PageWidth - y + 1.5 * size, x, String(3 - Len(i + begin - 1), "0") & (i + begin - 1))
+                    If pages >= 1000 Then
+                        If i Mod 2 = 0 Then
+                            Call pb.DrawText(pb.PageWidth - y + 1.5 * size, x, String(4 - Len(i + begin - 1), "0") & (i + begin - 1))
+                        Else
+                            Call pb.DrawText(y, x, String(4 - Len(i + begin - 1), "0") & (i + begin - 1))
+                        End If
                     Else
-                        Call pb.DrawText(y, x, String(3 - Len(i + begin - 1), "0") & (i + begin - 1))
+                        If i Mod 2 = 0 Then
+                            Call pb.DrawText(pb.PageWidth - y + 1.5 * size, x, String(3 - Len(i + begin - 1), "0") & (i + begin - 1))
+                        Else
+                            Call pb.DrawText(y, x, String(3 - Len(i + begin - 1), "0") & (i + begin - 1))
+                        End If
                     End If
                 Next i
             End If
@@ -642,7 +682,11 @@ Private Sub Command3_Click()
         y = pb.PageHeight * Slider2.Value / 100
         pb.SetTextSize size
         pb.SetTextColor r, g, b
-        Call pb.DrawRotatedText(x, y, angle, String(4 - Len(Str(page)), "0") & page)
+        If maxpage >= 1000 Then
+            Call pb.DrawRotatedText(x, y, angle, String(5 - Len(Str(page)), "0") & page)
+        Else
+            Call pb.DrawRotatedText(x, y, angle, String(4 - Len(Str(page)), "0") & page)
+        End If
         page = page + 1
         
         Do While page <= maxpage
@@ -650,7 +694,11 @@ Private Sub Command3_Click()
             pb.SetPageSize "A4"
             pb.SetTextSize size
             pb.SetTextColor r, g, b
-            Call pb.DrawRotatedText(x, y, angle, String(4 - Len(Str(page)), "0") & page)
+            If maxpage >= 1000 Then
+                Call pb.DrawRotatedText(x, y, angle, String(5 - Len(Str(page)), "0") & page)
+            Else
+                Call pb.DrawRotatedText(x, y, angle, String(4 - Len(Str(page)), "0") & page)
+            End If
             page = page + 1
         Loop
             
@@ -784,10 +832,18 @@ Private Sub Command7_Click()
                 pb.SetPageSize "A4"
                 pb.SetTextSize size
                 pb.SetTextColor r, g, b
-                If page Mod 2 <> 0 Then
-                    Call pb.DrawRotatedText(pb.PageWidth - x - 1.5 * size, y, angle, String(4 - Len(Str(page + 1)), "0") & page + 1)
+                If maxpage >= 1000 Then
+                    If page Mod 2 <> 0 Then
+                        Call pb.DrawRotatedText(pb.PageWidth - x - 1.5 * size, y, angle, String(5 - Len(Str(page + 1)), "0") & page + 1)
+                    Else
+                        Call pb.DrawRotatedText(x, y, angle, String(5 - Len(Str(page - 1)), "0") & page - 1)
+                    End If
                 Else
-                    Call pb.DrawRotatedText(x, y, angle, String(4 - Len(Str(page - 1)), "0") & page - 1)
+                    If page Mod 2 <> 0 Then
+                        Call pb.DrawRotatedText(pb.PageWidth - x - 1.5 * size, y, angle, String(4 - Len(Str(page + 1)), "0") & page + 1)
+                    Else
+                        Call pb.DrawRotatedText(x, y, angle, String(4 - Len(Str(page - 1)), "0") & page - 1)
+                    End If
                 End If
                 page = page + 1
             Loop
@@ -798,10 +854,18 @@ Private Sub Command7_Click()
                     pb.SetPageSize "A4"
                     pb.SetTextSize size
                     pb.SetTextColor r, g, b
-                    If page Mod 2 <> 0 Then
-                        Call pb.DrawRotatedText(pb.PageWidth - x - 1.5 * size, y, angle, String(4 - Len(Str(page + 1)), "0") & page + 1)
+                    If maxpage >= 1000 Then
+                        If page Mod 2 <> 0 Then
+                            Call pb.DrawRotatedText(pb.PageWidth - x - 1.5 * size, y, angle, String(5 - Len(Str(page + 1)), "0") & page + 1)
+                        Else
+                            Call pb.DrawRotatedText(x, y, angle, String(5 - Len(Str(page - 1)), "0") & page - 1)
+                        End If
                     Else
-                        Call pb.DrawRotatedText(x, y, angle, String(4 - Len(Str(page - 1)), "0") & page - 1)
+                        If page Mod 2 <> 0 Then
+                            Call pb.DrawRotatedText(pb.PageWidth - x - 1.5 * size, y, angle, String(4 - Len(Str(page + 1)), "0") & page + 1)
+                        Else
+                            Call pb.DrawRotatedText(x, y, angle, String(4 - Len(Str(page - 1)), "0") & page - 1)
+                        End If
                     End If
                 Else                        '最后一页
                     Call pb.NewPage         '空白页
@@ -810,7 +874,11 @@ Private Sub Command7_Click()
                     pb.SetPageSize "A4"
                     pb.SetTextSize size
                     pb.SetTextColor r, g, b
-                    Call pb.DrawRotatedText(x, y, angle, String(4 - Len(Str(page)), "0") & page)
+                    If maxpage >= 1000 Then
+                        Call pb.DrawRotatedText(x, y, angle, String(5 - Len(Str(page)), "0") & page)
+                    Else
+                        Call pb.DrawRotatedText(x, y, angle, String(4 - Len(Str(page)), "0") & page)
+                    End If
                 End If
                 page = page + 1
             Loop
@@ -881,8 +949,8 @@ Function check2() As Boolean
     ElseIf Text5 = "" Then
         MsgBox "请输入最大页数"
         check2 = False
-    ElseIf Text5 > 999 Then
-        MsgBox "页数不能超过999"
+    ElseIf Text5 > 9999 Then
+        MsgBox "页数不能超过9999"
         check2 = False
     ElseIf Text3 = "" Then
         MsgBox "请输入字体的大小"
@@ -902,7 +970,7 @@ End Sub
 
 
 Private Sub Tab1_Click()
-    MsgBox "         PdfPager v1.2  2018.9" & vbCrLf & vbCrLf & "Pdf自动编码器" _
+    MsgBox "         PdfPager v1.3  2019.3" & vbCrLf & vbCrLf & "Pdf自动编码器" _
     , vbOKOnly, "关于"
 End Sub
 

@@ -39,6 +39,7 @@ Begin VB.Form Form1
       Width           =   1068
    End
    Begin VB.Timer Timer1 
+      Enabled         =   0   'False
       Interval        =   3000
       Left            =   2208
       Top             =   3360
@@ -98,7 +99,7 @@ Begin VB.Form Form1
       _Version        =   393216
       Orientation     =   1
       Max             =   100
-      SelStart        =   92
+      SelStart        =   94
       Value           =   94
    End
    Begin MSComctlLib.Slider Slider1 
@@ -205,7 +206,6 @@ Begin VB.Form Form1
       Height          =   264
       Left            =   1632
       TabIndex        =   0
-      Text            =   "D:\234.pdf"
       Top             =   960
       Width           =   4428
    End
@@ -460,6 +460,7 @@ Private Sub Command1_Click()
         Dim pages As Integer
         Dim SavePath As String
         Dim SaveName As String
+        Dim rotation As Integer
         Dim x As Integer, y As Integer
         Dim size As Double
         Dim begin As Integer
@@ -472,44 +473,39 @@ Private Sub Command1_Click()
         Call pb.UnlockKey("j87ig3k84fb9eq9dy34z7u66y")
         Call pb.LoadFromFile(PdfFile, "")
         
-        If pb.PageWidth > pb.PageHeight Then
-            x = pb.PageWidth * (100 - Slider1.Value) / 100
-            y = pb.PageHeight * (100 - Slider2.Value) / 100
-        Else
-            y = pb.PageWidth * (100 - Slider1.Value) / 100
-            x = pb.PageHeight * (100 - Slider2.Value) / 100
-            Call pb.SetOrigin(3)        '右下角为坐标轴原点
-        End If
         pages = pb.PageCount()
-        
-        If pb.PageWidth > pb.PageHeight Then        '处理读取到的宽和长相反的情况
-            For i = 1 To pages
-                Call pb.SelectPage(i)
-                Call pb.SetFontFlags(1, 0, 1, 0, 0, 0, 0, 1)
-                pb.SetTextSize size
-                pb.SetTextColor r, g, b
-                If pages >= 1000 Then
-                    Call pb.DrawRotatedText(y, x, 270, String(4 - Len(i + begin - 1), "0") & (i + begin - 1))
-                Else
-                    Call pb.DrawRotatedText(y, x, 270, String(3 - Len(i + begin - 1), "0") & (i + begin - 1))
-                End If
-            Next i
-        Else
-            For i = 1 To pages
-                Call pb.SelectPage(i)
-                Call pb.SetFontFlags(1, 0, 1, 0, 0, 0, 0, 1)
-                pb.SetTextSize size
-                pb.SetTextColor r, g, b
-                If pages >= 1000 Then
-                    Call pb.DrawText(y, x, String(4 - Len(i + begin - 1), "0") & (i + begin - 1))
-                Else
-                    Call pb.DrawText(y, x, String(3 - Len(i + begin - 1), "0") & (i + begin - 1))
-                End If
-            Next i
-        End If
+        For i = 1 To pages
+            Call pb.SelectPage(i)
+            Call pb.SetFontFlags(1, 0, 1, 0, 0, 0, 0, 1)
+            pb.SetTextSize size
+            pb.SetTextColor r, g, b
+            rotation = pb.PageRotation  '页面方向
+            Select Case rotation
+                Case 0
+                    pb.SetOrigin (3)
+                Case 90
+                    pb.SetOrigin (2)
+                Case 180
+                    pb.SetOrigin (1)
+                Case 270
+                    pb.SetOrigin (0)
+            End Select
+            If pb.PageWidth > pb.PageHeight Then    '横向页面
+                x = pb.PageHeight * (100 - Slider1.Value) / 100
+                y = pb.PageWidth * (100 - Slider2.Value) / 100
+            Else
+                x = pb.PageWidth * (100 - Slider1.Value) / 100
+                y = pb.PageHeight * (100 - Slider2.Value) / 100
+            End If
+            If pages >= 1000 Then
+                Call pb.DrawRotatedText(x, y, rotation, String(4 - Len(i + begin - 1), "0") & (i + begin - 1))
+            Else
+                Call pb.DrawRotatedText(x, y, rotation, String(3 - Len(i + begin - 1), "0") & (i + begin - 1))
+            End If
+        Next i
         
         SavePath = Left(PdfFile, InStrRev(PdfFile, "\"))
-        SaveName = Mid(PdfFile, InStrRev(PdfFile, "\") + 1, InStrRev(PdfFile, ".") - 4) & "_paged.pdf"
+        SaveName = Mid(PdfFile, InStrRev(PdfFile, "\") + 1, InStrRev(PdfFile, ".pdf") - InStrRev(PdfFile, "\") - 1) & "_paged.pdf"
         result = pb.SaveToFile(SavePath & SaveName)
         If result = 0 Then MsgBox ("保存失败，请先关闭文件")
     End If
@@ -889,6 +885,65 @@ Private Sub Command7_Click()
     End If
     SB1.Panels(1).Text = "完成 耗时：" & Timer - time & "s"
     Timer1.Enabled = True
+End Sub
+
+Private Sub Command8_Click()
+    If check1() = True Then
+        Dim pb As New DebenuPDFLibraryAX1016.PDFLibrary
+        Dim PdfFile As String
+        Dim pages As Integer
+        Dim SavePath As String
+        Dim SaveName As String
+        Dim x As Integer, y As Integer
+        Dim rotation As Integer
+        Dim size As Double
+        Dim begin As Integer
+        Dim r%, g%, b%
+        
+        PdfFile = Text1.Text
+        size = Text3.Text
+        begin = Int(Text6.Text)
+        
+        Call pb.UnlockKey("j87ig3k84fb9eq9dy34z7u66y")
+        Call pb.LoadFromFile(PdfFile, "")
+        
+        Text9.Text = "rotation=" & pb.PageRotation()
+        pages = pb.PageCount()
+        For i = 1 To pages
+            Call pb.SelectPage(i)
+            Call pb.SetFontFlags(1, 0, 1, 0, 0, 0, 0, 1)
+            pb.SetTextSize size
+            pb.SetTextColor r, g, b
+            rotation = pb.PageRotation
+            Select Case rotation
+                Case 0
+                    pb.SetOrigin (3)
+                Case 90
+                    pb.SetOrigin (2)
+                Case 180
+                    pb.SetOrigin (1)
+                Case 270
+                    pb.SetOrigin (0)
+            End Select
+            If pb.PageWidth > pb.PageHeight Then
+                x = pb.PageHeight * (100 - Slider1.Value) / 100
+                y = pb.PageWidth * (100 - Slider2.Value) / 100
+            Else
+                x = pb.PageWidth * (100 - Slider1.Value) / 100
+                y = pb.PageHeight * (100 - Slider2.Value) / 100
+            End If
+            If pages >= 1000 Then
+                Call pb.DrawRotatedText(x, y, rotation, String(4 - Len(i + begin - 1), "0") & (i + begin - 1))
+            Else
+                Call pb.DrawRotatedText(x, y, rotation, String(3 - Len(i + begin - 1), "0") & (i + begin - 1))
+            End If
+        Next i
+        
+        SavePath = Left(PdfFile, InStrRev(PdfFile, "\"))
+        SaveName = Mid(PdfFile, InStrRev(PdfFile, "\") + 1, InStrRev(PdfFile, ".pdf") - InStrRev(PdfFile, "\") - 1) & "_paged.pdf"
+        result = pb.SaveToFile(SavePath & SaveName)
+        If result = 0 Then MsgBox ("保存失败，请先关闭文件")
+    End If
 End Sub
 
 Private Sub Form_Load()

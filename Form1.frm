@@ -1025,7 +1025,7 @@ End Sub
 
 
 Private Sub Tab1_Click()
-    MsgBox "         PdfPager v1.3  2019.3" & vbCrLf & vbCrLf & "Pdf自动编码器" _
+    MsgBox "         PdfPager v1.4  2019.7" & vbCrLf & vbCrLf & "Pdf自动编码器" _
     , vbOKOnly, "关于"
 End Sub
 
